@@ -6,6 +6,7 @@ import ui.DetailModel;
 import ui.GUI;
 
 import javax.swing.*;
+import java.util.Arrays;
 import java.util.List;
 import java.awt.*;
 import java.io.PrintWriter;
@@ -24,7 +25,13 @@ public class BurpExtender implements IBurpExtender,ITab, IHttpListener{
         BurpExtender.callbacks = callbacks;
     }
 
+    //记录行号
+    private int rowNum = 0;
+    //请求次数
     private int requestNum = 1;
+
+    //过滤图片等二进制响应包
+    private List<String> filterResponse = Arrays.asList("PNG","JPEG","GIF","SVG","CSS","image");
     private static IExtensionHelpers helpers;
 
     public static IExtensionHelpers getHelpers() {
@@ -96,22 +103,26 @@ public class BurpExtender implements IBurpExtender,ITab, IHttpListener{
             if (!messageIsRequest){
                 //getResponse获得的是字节序列
                 IResponseInfo analyzedResponse = helpers.analyzeResponse(messageInfo.getResponse());
-//                //获取响应码
-//                short statusCode = analyzedResponse.getStatusCode();
-                //获取响应包完整字符串
-                String resp = new String(messageInfo.getResponse());
-                //响应包是没有参数的概念的，大多需要修改的内容都在body中
-                int bodyOffset = analyzedResponse.getBodyOffset();
-                //截取响应包body字符串
-                String body = resp.substring(bodyOffset);
-                PathMatcher pathMatcher = new PathMatcher(body);
-                List<String> resultString = pathMatcher.getResultString();
-                //判读是否匹配有敏感字符串，有的话将请求响应放入map，没有则略过
-                if (!resultString.isEmpty()){
-                    DetailData detailData = new DetailData(requestNum,messageInfo,resultString);
-                    //将请求信息放入map里面
-                    DetailModel.addDetailDataInfo(requestNum,detailData);
-                    requestNum++;
+//                stdout.println("过滤前:" + analyzedResponse.getStatedMimeType());
+                //不要图片等二进制信息
+                if(!filterResponse.contains(analyzedResponse.getStatedMimeType())){
+//                    stdout.println("过滤后:" + analyzedResponse.getStatedMimeType());
+                    //获取响应包完整字符串
+                    String resp = new String(messageInfo.getResponse());
+                    //响应包是没有参数的概念的，大多需要修改的内容都在body中
+                    int bodyOffset = analyzedResponse.getBodyOffset();
+                    //截取响应包body字符串
+                    String body = resp.substring(bodyOffset);
+                    PathMatcher pathMatcher = new PathMatcher(body);
+                    List<String> resultString = pathMatcher.getResultString();
+                    //判读是否匹配有敏感字符串，有的话将请求响应放入map，没有则略过
+                    if (!resultString.isEmpty()){
+                        DetailData detailData = new DetailData(requestNum,messageInfo,resultString);
+                        //将请求信息放入map里面
+                        DetailModel.addDetailDataInfo(rowNum,detailData);
+                        requestNum++;
+                        rowNum++;
+                    }
                 }
             }
         }

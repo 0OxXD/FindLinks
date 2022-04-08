@@ -1,6 +1,8 @@
 package ui;
 
 import burp.*;
+import misc.IndexedLinkedHashMap;
+import misc.RowsToConsecutiveRows;
 
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -9,7 +11,6 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 /**
@@ -28,9 +29,9 @@ public class DetailModel extends AbstractTableModel implements IMessageEditorCon
     private static List<String> requestsInfoNameList = new ArrayList<>(Arrays.asList(requestsInfoName));
 
     //记录详细信息map
-    private static LinkedHashMap<Integer,DetailData> detailDatas = new LinkedHashMap<>();
+    private static IndexedLinkedHashMap<String,DetailData> detailDatas = new IndexedLinkedHashMap<>();
 
-    public static LinkedHashMap<Integer, DetailData> getDetailDatas() {
+    public static IndexedLinkedHashMap<String, DetailData> getDetailDatas() {
         return detailDatas;
     }
 
@@ -51,11 +52,11 @@ public class DetailModel extends AbstractTableModel implements IMessageEditorCon
 
 
     public IHttpRequestResponse getReqAndResInfosByRow(int row) {
-        return getDetailDatas().get(row+1).getMessageInfo();
+        return getDetailDatas().get(row).getMessageInfo();
     }
 
     public List<String> getResultSensitiveInfosByRow(int row) {
-        return getDetailDatas().get(row+1).getResultString();
+        return getDetailDatas().get(row).getResultString();
     }
 
 
@@ -68,11 +69,30 @@ public class DetailModel extends AbstractTableModel implements IMessageEditorCon
             stdout = new PrintWriter(System.out, true);
             stderr = new PrintWriter(System.out, true);
         }
+        /*
+        		关于这个listener，主要的目标的是当数据发生改变时，更新到数据库。通过fireTableRowsxxxx来触发。
+        * */
+        /*this.addTableModelListener(new TableModelListener() {//表格模型监听
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                int type = e.getType();//获取事件类型(增、删、改等)
+                int rowstart = e.getFirstRow();//获取触发事件的行索引，即是fireTableRowxxx中的2个参数。
+                int rowend = e.getLastRow();
+                stdout.println("ssssssss");
+                if (type == TableModelEvent.DELETE) {//可以批量操作
+                    //必须从高位index进行删除，否则删除的对象会和预期不一致！！！
+                    for (int i = rowend; i >= rowstart; i--) {
+                        detailDatas.remove(i);//删除tableModel中的元素。
+                        stdout.println("deleted"+i);
+                    }
+                }
+            }
+        });*/
     }
 
     //将请求信息写入map
-    public static void addDetailDataInfo(int requestNum,DetailData detailData) {
-        detailDatas.put(requestNum,detailData);
+    public static void addDetailDataInfo(int rowNum,DetailData detailData) {
+        detailDatas.put(String.valueOf(rowNum),detailData);
     }
 
     @Override
@@ -114,7 +134,7 @@ public class DetailModel extends AbstractTableModel implements IMessageEditorCon
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        DetailData detailData = detailDatas.get(rowIndex+1);
+        DetailData detailData = detailDatas.get(rowIndex);
         if (columnIndex == requestsInfoNameList.indexOf("序号")) {
             return rowIndex+1;
         }
@@ -149,5 +169,29 @@ public class DetailModel extends AbstractTableModel implements IMessageEditorCon
             return String.class;
         }
         return String.class;
+    }
+
+    /*
+	//如果使用了tableModelListener,就需要注意：在监听事件中去执行具体动作，这里只是起通知作用！！！！
+	尤其是改变了lineEntries数量的操作！index将发生改变。
+	 */
+    public void removeRows(int[] rows) {
+        fireDeleted(rows);
+    }
+
+    //为了同时fire多个不连续的行，自行实现这个方法。
+    public void fireDeleted(int[] rows) {
+        List<int[]> slice = RowsToConsecutiveRows.slice(rows);
+        //必须逆序，从高位index开始删除，否则删除的对象和预期不一致！！！
+        //上面得到的顺序就是从高位开始的
+        for(int[] sli:slice) {
+//            stdout.println(Arrays.toString(sli));
+            for (int i = sli[0]; i >= sli[sli.length-1]; i--) {
+                detailDatas.remove(i);//删除tableModel中的元素。
+//                stdout.println("deleted"+i);
+            }
+            //这里传入的值必须是低位数在前面，高位数在后面
+            this.fireTableRowsDeleted(sli[sli.length-1],sli[0]);
+        }
     }
 }

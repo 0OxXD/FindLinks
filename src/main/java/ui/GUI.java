@@ -44,8 +44,7 @@ public class GUI extends JFrame {
         //设置布局
         jPanel.setLayout(new BorderLayout(0, 0));
 
-        //存放目标敏感目录
-        targetScrollPane = new JScrollPane();
+
 //        targetScrollPane.setViewportBorder(new LineBorder(new Color(0, 0, 0)));
 
         //结果文本框
@@ -56,7 +55,8 @@ public class GUI extends JFrame {
         //表格
         detailModel = new DetailModel();
         detailTable = new DetailTable(detailModel,jTextArea);
-        targetScrollPane.setViewportView(detailTable);
+        //存放目标敏感目录
+        targetScrollPane = new JScrollPane(detailTable);
         targetScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
 
