@@ -39,7 +39,7 @@ public class BurpExtender implements IBurpExtender,ITab, IHttpListener{
     }
 
     private String extensionName = "FindLinks";
-    private String version ="v0.1";
+    private String version ="v0.2";
     public PrintWriter stdout;
     public PrintWriter stderr;
     public static GUI gui;
