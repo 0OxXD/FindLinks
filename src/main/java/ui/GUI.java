@@ -12,6 +12,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 /**
  * Created with IntelliJ IDEA.
@@ -29,8 +31,17 @@ public class GUI extends JFrame {
     private JSplitPane jSplitPane;
     private JSplitPane detailPane;
     private JSplitPane tableAndTextAreaPane;
+    private JSplitPane checkboxAndTextAreaPane;
+    private JCheckBox switchCheckBox;
     private JTextArea jTextArea;
     private JTabbedPane resultTabbedPane;
+    //默认开启
+    private boolean onoff = true;
+
+    public boolean isOnoff() {
+        return onoff;
+    }
+
     private IMessageEditor requestViewer;
     private IMessageEditor responseViewer;
 
@@ -72,7 +83,28 @@ public class GUI extends JFrame {
         tableAndTextAreaPane = new JSplitPane();
         tableAndTextAreaPane.setResizeWeight(0.4);
         tableAndTextAreaPane.setLeftComponent(targetScrollPane);
-        tableAndTextAreaPane.setRightComponent(resultTabbedPane);
+
+
+        //复选框和文本框
+        checkboxAndTextAreaPane = new JSplitPane();
+        checkboxAndTextAreaPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+        //是否开启插件，默认开启
+        switchCheckBox = new JCheckBox("启用插件",true);
+        switchCheckBox.addItemListener(new ItemListener(){
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if(switchCheckBox.isSelected()){
+                    onoff = true;
+                }else{
+                    onoff = false;
+                }
+            }
+        });
+        checkboxAndTextAreaPane.setTopComponent(switchCheckBox);
+        checkboxAndTextAreaPane.setBottomComponent(resultTabbedPane);
+
+        tableAndTextAreaPane.setRightComponent(checkboxAndTextAreaPane);
+//        tableAndTextAreaPane.setRightComponent(resultTabbedPane);
         jSplitPane.setTopComponent(tableAndTextAreaPane);
         //增加请求包返回包显示
         detailPane=detailTable.getDetailSplitPane();
