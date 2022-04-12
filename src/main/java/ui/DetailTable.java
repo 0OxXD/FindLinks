@@ -40,6 +40,7 @@ public class DetailTable extends JTable {
 
     public void setDetailModel(DetailModel detailModel) {
         this.detailModel = detailModel;
+        setModel(detailModel);
     }
 
     private JSplitPane detailSplitPane;
@@ -58,9 +59,9 @@ public class DetailTable extends JTable {
         setDetailModel(detailModel);
         //设置结果显示文本框
         setResultTextArea(resultTextArea);
-        this.setModel(detailModel);
+//        this.setModel(detailModel);
         this.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        this.setBorder(new LineBorder(new Color(0, 0, 0)));
+//        this.setBorder(new LineBorder(new Color(0, 0, 0)));
         //排序不会搞，有很多bug，暂时不使用
 //        RowSorter<DetailModel> sorter = new TableRowSorter<>(detailModel);
 //        this.setRowSorter(sorter);
@@ -71,15 +72,12 @@ public class DetailTable extends JTable {
         this.getColumnModel().getColumn(0).setPreferredWidth(50);
         this.getColumnModel().getColumn(1).setPreferredWidth(150);
         this.getColumnModel().getColumn(2).setPreferredWidth(700);
-        //将表格自动调整的状态给关闭掉
-//        this.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-//        this.setPreferredScrollableViewportSize(new Dimension(1500,320));
-//        this.setColumnSelectionAllowed(true);
-//        this.setCellSelectionEnabled(true);
+
+
         this.setSurrendersFocusOnKeystroke(true);
         //在table的空白区域显示右键菜单
         this.setFillsViewportHeight(true);
-        this.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
+//        this.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
         this.addMouseListener( new MouseAdapter()
         {
             @Override//title表格中的鼠标右键菜单
@@ -132,15 +130,14 @@ public class DetailTable extends JTable {
         splitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
 
         JTabbedPane requestPanel = new JTabbedPane();
-        splitPane.setLeftComponent(requestPanel);
-
         JTabbedPane responsePanel = new JTabbedPane();
-        splitPane.setRightComponent(responsePanel);
 
         requestViewer = BurpExtender.getCallbacks().createMessageEditor(this.getDetailModel(), false);
         responseViewer = BurpExtender.getCallbacks().createMessageEditor(this.getDetailModel(), false);
         requestPanel.addTab("Request", requestViewer.getComponent());
         responsePanel.addTab("Response", responseViewer.getComponent());
+        splitPane.setLeftComponent(requestPanel);
+        splitPane.setRightComponent(responsePanel);
 
         return splitPane;
     }

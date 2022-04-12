@@ -42,9 +42,6 @@ public class GUI extends JFrame {
         return onoff;
     }
 
-    private IMessageEditor requestViewer;
-    private IMessageEditor responseViewer;
-
     public GUI(){
         //创建面板
         jPanel=new JPanel();
@@ -67,8 +64,9 @@ public class GUI extends JFrame {
         detailModel = new DetailModel();
         detailTable = new DetailTable(detailModel,jTextArea);
         //存放目标敏感目录
-        targetScrollPane = new JScrollPane(detailTable);
-        targetScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        targetScrollPane = new JScrollPane();
+        targetScrollPane.setViewportView(detailTable);
+//        targetScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 
 
         resultTabbedPane=new JTabbedPane();
@@ -104,7 +102,7 @@ public class GUI extends JFrame {
         checkboxAndTextAreaPane.setBottomComponent(resultTabbedPane);
 
         tableAndTextAreaPane.setRightComponent(checkboxAndTextAreaPane);
-//        tableAndTextAreaPane.setRightComponent(resultTabbedPane);
+
         jSplitPane.setTopComponent(tableAndTextAreaPane);
         //增加请求包返回包显示
         detailPane=detailTable.getDetailSplitPane();

@@ -1,7 +1,7 @@
 package burp;
 
 import matcher.PathMatcher;
-import ui.DetailData;
+import detail.DetailData;
 import ui.DetailModel;
 import ui.GUI;
 

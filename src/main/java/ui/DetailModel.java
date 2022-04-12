@@ -1,14 +1,12 @@
 package ui;
 
 import burp.*;
+import detail.DetailData;
 import misc.IndexedLinkedHashMap;
 import misc.RowsToConsecutiveRows;
 
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import java.io.PrintWriter;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,7 +27,7 @@ public class DetailModel extends AbstractTableModel implements IMessageEditorCon
     private static List<String> requestsInfoNameList = new ArrayList<>(Arrays.asList(requestsInfoName));
 
     //记录详细信息map
-    private static IndexedLinkedHashMap<String,DetailData> detailDatas = new IndexedLinkedHashMap<>();
+    private static IndexedLinkedHashMap<String, DetailData> detailDatas = new IndexedLinkedHashMap<>();
 
     public static IndexedLinkedHashMap<String, DetailData> getDetailDatas() {
         return detailDatas;
