@@ -1,9 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="findlinks:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/findlinks_jar</output-path>
-    <root id="archive" name="findlinks.jar">
-      <element id="module-output" name="findlinks" />
-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/net/portswigger/burp/extender/burp-extender-api/1.7.22/burp-extender-api-1.7.22.jar" path-in-jar="/" />
-    </root>
-  </artifact>
-</component>
