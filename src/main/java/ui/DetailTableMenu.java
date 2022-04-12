@@ -33,7 +33,14 @@ public class DetailTableMenu extends JPopupMenu {
             public void actionPerformed(ActionEvent actionEvent) {
                 int result = JOptionPane.showConfirmDialog(null,"确定删除?");
                 if (result == JOptionPane.YES_OPTION) {
+                    //删除对应行
                     detailTable.getDetailModel().removeRows(modelRows);
+                    //清空对应的敏感信息文本
+                    detailTable.getResultTextArea().setText("");
+                    //清空对应的请求响应信息
+                    byte[] tmp =new byte[0];
+                    detailTable.getRequestViewer().setMessage(tmp,true);
+                    detailTable.getResponseViewer().setMessage(tmp,false);
                 }else {
                     return;
                 }

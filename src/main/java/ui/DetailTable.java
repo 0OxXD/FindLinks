@@ -29,9 +29,23 @@ import java.util.List;
  * @Description:
  */
 public class DetailTable extends JTable {
+    public IMessageEditor getRequestViewer() {
+        return requestViewer;
+    }
+
     private IMessageEditor requestViewer;
+
+    public IMessageEditor getResponseViewer() {
+        return responseViewer;
+    }
+
     private IMessageEditor responseViewer;
     private DetailModel detailModel;
+
+    public JTextArea getResultTextArea() {
+        return resultTextArea;
+    }
+
     private JTextArea resultTextArea;
 
     public void setResultTextArea(JTextArea resultTextArea) {
@@ -77,7 +91,7 @@ public class DetailTable extends JTable {
         this.setSurrendersFocusOnKeystroke(true);
         //在table的空白区域显示右键菜单
         this.setFillsViewportHeight(true);
-//        this.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
+        this.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
         this.addMouseListener( new MouseAdapter()
         {
             @Override//title表格中的鼠标右键菜单
